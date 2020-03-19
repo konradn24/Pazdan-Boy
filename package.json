@@ -1,0 +1,15 @@
+{
+  "name": "pazdan-boy",
+  "version": "1.0.0",
+  "description": "Bot przeznaczony na serwer Pazdan_Owego",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "konradn24",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^11.6.1",
+    "jsonfile": "^6.0.0"
+  }
+}
