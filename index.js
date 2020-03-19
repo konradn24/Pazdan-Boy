@@ -3,8 +3,6 @@ const bot = new Discord.Client();
 
 const jsonfile = require('jsonfile');
 
-const token = "";
-
 const prefix = "!";
 
 var onlineMembersChannelID, onlineMembersChannelName;
@@ -128,4 +126,4 @@ function updateDate(guild) {
     if(guild.channels.find("name", dateChannelName) == null) console.log(dateChannelName);
 }
 
-bot.login(token);
+bot.login(process.env.BOT_TOKEN);
