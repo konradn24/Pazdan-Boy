@@ -15,7 +15,7 @@ let admins, onlineUsers;
 bot.on('ready', () =>{
     console.log('Jestem aktywny!');
 
-    bot.user.setActivity('Pomoc: !pomoc', {type: 'CUSTOM_STATUS'});
+    bot.user.setActivity('!pomoc', {type: 'WATCHING'});
 })
 
 bot.on('message', msg=>{
@@ -65,10 +65,12 @@ bot.on('message', msg=>{
                 }
 
                 channelName = channelName.substr(0, channelName.length - 2);
+
+                channel.send(channelName);
             }
 
             if(args[1] == 1) {
-                if(server.channels.find("name", `${args[2]}`) != null) {
+                if(server.channels.find("name", `${channelName}`) != null) {
                     onlineMembersChannelID = server.channels.find("name", `${channelName}`).id;
 
                     channel.send(`Ustawiono identyfikator kanału statystyki nr. 1 jako ${onlineMembersChannelID} (była nazwa: ${channelName})`);
