@@ -64,9 +64,7 @@ bot.on('message', msg=>{
                     channelName += args[i] + " ";
                 }
 
-                channelName = channelName.substr(0, channelName.length - 2);
-
-                channel.send(channelName);
+                channelName = channelName.substr(0, channelName.length - 1);
             }
 
             if(args[1] == 1) {
