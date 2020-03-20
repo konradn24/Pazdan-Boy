@@ -84,7 +84,7 @@ bot.on('message', msg=>{
 
                     channel.send(`Ustawiono identyfikator kanału statystyki nr. 2 (ilość użytkowników) jako ${membersChannelID} (była nazwa: ${channelName})`);
 
-                    server.channels.find("name", `${channelName}`).setName(`Osoby: ${server.memberCount}`); membersChannelName = `Osoby: ${server.memberCount}`;
+                    server.channels.find("name", `${channelName}`).setName(`Czołgiści: ${server.memberCount}`); membersChannelName = `Czołgiści: ${server.memberCount}`;
                     membersStatistic = true;
                 } else if(args[2]) channel.send(`Podano nieprawidłową nazwę kanału: ${channelName} !`);
             } else if(args[1] == 3) {
@@ -93,7 +93,7 @@ bot.on('message', msg=>{
 
                     channel.send(`Ustawiono identyfikator kanału statystyki nr. 3 (nowy użytkownik) jako ${lastMemberChannelID} (była nazwa: ${channelName})`);
 
-                    server.channels.find("name", `${channelName}`).setName(`Nowa osoba: ${lastMember}`); lastMemberChannelName = `Nowa osoba: ${lastMember}`;
+                    server.channels.find("name", `${channelName}`).setName(`Nowy czołgista: ${lastMember}`); lastMemberChannelName = `Nowy czołgista: ${lastMember}`;
                     lastMemberStatistic = true;
                 } else if(args[2]) channel.send(`Podano nieprawidłową nazwę kanału: ${channelName} !`);
             } else if(args[1] == 4) {
@@ -123,7 +123,51 @@ bot.on('message', msg=>{
             break;
         }
 
-        case "usun-kanal": {
+        case "usun-statystyke": {
+            if(!args[1]) channel.send("Podaj numer statystyki, którą chcesz usunąc! Wpisz **!pomoc**, aby ją uzyskać.");
+
+            if(args[1] = 1) {
+                if(onlineMembersStatistic) {
+                    server.channels.find("name", `${onlineMembersChannelName}`).setName("1");
+
+                    onlineMembersStatistic = false;
+                    onlineMembersChannelID = 0;
+                    onlineMembersChannelName = "";
+                } else channel.send("Ta statystyka nie jest aktywna! Aby zobaczyć aktywne statystyki wpisz **!statystyki**.");
+            } else if(args[1] = 2) {
+                if(membersStatistic) {
+                    server.channels.find("name", `${membersChannelName}`).setName("2");
+
+                    membersStatistic = false;
+                    membersChannelID = 0;
+                    membersChannelName = "";
+                } else channel.send("Ta statystyka nie jest aktywna! Aby zobaczyć aktywne statystyki wpisz **!statystyki**.");
+            } else if(args[1] = 3) {
+                if(lastMemberStatistic) {
+                    server.channels.find("name", `${lastMemberChannelName}`).setName("3");
+
+                    lastMemberStatistic = false;
+                    lastMemberChannelID = 0;
+                    lastMemberChannelName = "";
+                } else channel.send("Ta statystyka nie jest aktywna! Aby zobaczyć aktywne statystyki wpisz **!statystyki**.");
+            } else if(args[1] = 4) {
+                if(dateStatistic) {
+                    server.channels.find("name", `${dateChannelName}`).setName("4");
+
+                    dateStatistic = false;
+                    dateChannelID = 0;
+                    dateChannelName = "";
+                } else channel.send("Ta statystyka nie jest aktywna! Aby zobaczyć aktywne statystyki wpisz **!statystyki**.");
+            } else if(args[1] = 5) {
+                if(administrationStatistic) {
+                    server.channels.find("name", `${administrationChannelName}`).setName("5");
+
+                    administrationStatistic = false;
+                    administrationChannelID = 0;
+                    administrationChannelName = "";
+                } else channel.send("Ta statystyka nie jest aktywna! Aby zobaczyć aktywne statystyki wpisz **!statystyki**.");
+            } else if(args[1]) channel.send("Nieprawidłowy numer statystyki!");
+
             break;
         }
     }
@@ -146,20 +190,20 @@ bot.on("guildMemberUpdate", member => {
 
 bot.on("guildMemberAdd", member => {
     if(membersStatistic) {
-        member.guild.channels.find("name", `${membersChannelName}`).setName(`Osoby: ${member.guild.memberCount}`);
-        membersChannelName = `Osoby: ${member.guild.memberCount}`;
+        member.guild.channels.find("name", `${membersChannelName}`).setName(`Czołgiści: ${member.guild.memberCount}`);
+        membersChannelName = `Czołgiści: ${member.guild.memberCount}`;
     }
 
     if(lastMemberStatistic) {
         lastMember = member.displayName;
-        member.guild.channels.find("name", `${lastMemberChannelName}`).setName(`Nowa osoba: ${lastMember}`); lastMemberChannelName = `Nowa osoba: ${lastMember}`;
+        member.guild.channels.find("name", `${lastMemberChannelName}`).setName(`Nowy czołgista: ${lastMember}`); lastMemberChannelName = `Nowy czołgista: ${lastMember}`;
     }
 });
 
 bot.on("guildMemberRemove", member => {
     if(membersStatistic) {
-        member.guild.channels.find("name", `${membersChannelName}`).setName(`Osoby: ${member.guild.memberCount}`); 
-        membersChannelName = `Osoby: ${member.guild.memberCount}`;
+        member.guild.channels.find("name", `${membersChannelName}`).setName(`Czołgiści: ${member.guild.memberCount}`); 
+        membersChannelName = `Czołgiści: ${member.guild.memberCount}`;
     }
 });
 
