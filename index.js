@@ -77,7 +77,7 @@ bot.on('message', msg=>{
 
                     server.channels.find("name", `${channelName}`).setName(`Osoby online: ${onlineUsers.size}`); onlineMembersChannelName = `Osoby online: ${onlineUsers.size}`;
                     onlineMembersStatistic = true;
-                } else channel.send(`Podano nieprawidłową nazwę kanału: ${channelName} !`);
+                } else if(args[2]) channel.send(`Podano nieprawidłową nazwę kanału: ${channelName} !`);
             } else if(args[1] == 2) {
                 if(server.channels.find("name", `${channelName}`) != null) {
                     membersChannelID = server.channels.find("name", `${channelName}`).id;
@@ -86,7 +86,7 @@ bot.on('message', msg=>{
 
                     server.channels.find("name", `${channelName}`).setName(`Osoby: ${server.memberCount}`); membersChannelName = `Osoby: ${server.memberCount}`;
                     membersStatistic = true;
-                } else channel.send(`Podano nieprawidłową nazwę kanału: ${channelName} !`);
+                } else if(args[2]) channel.send(`Podano nieprawidłową nazwę kanału: ${channelName} !`);
             } else if(args[1] == 3) {
                 if(server.channels.find("name", `${channelName}`) != null) {
                     lastMemberChannelID = server.channels.find("name", `${channelName}`).id;
@@ -95,7 +95,7 @@ bot.on('message', msg=>{
 
                     server.channels.find("name", `${channelName}`).setName(`Nowa osoba: ${lastMember}`); lastMemberChannelName = `Nowa osoba: ${lastMember}`;
                     lastMemberStatistic = true;
-                } else channel.send(`Podano nieprawidłową nazwę kanału: ${channelName} !`);
+                } else if(args[2]) channel.send(`Podano nieprawidłową nazwę kanału: ${channelName} !`);
             } else if(args[1] == 4) {
                 if(server.channels.find("name", `${channelName}`) != null) {
                     dateChannelID = server.channels.find("name", `${channelName}`).id;
@@ -104,7 +104,7 @@ bot.on('message', msg=>{
 
                     server.channels.find("name", `${channelName}`).setName(`Data: 0`); dateChannelName = `Data: 0`;
                     dateStatistic = true;
-                } else channel.send(`Podano nieprawidłową nazwę kanału: ${channelName} !`);
+                } else if(args[2]) channel.send(`Podano nieprawidłową nazwę kanału: ${channelName} !`);
             } else if(args[1] == 5) {
                 if(server.channels.find("name", `${channelName}`) != null) {
                     administrationChannelID = server.channels.find("name", `${channelName}`).id;
@@ -117,7 +117,7 @@ bot.on('message', msg=>{
                     });
                     server.channels.find("name", `${channelName}`).setName(`Osoby w zarządzie: ${admins.size}`); administrationChannelName = `Osoby w zarządzie: ${admins.size}`;
                     administrationStatistic = true;
-                } else channel.send(`Podano nieprawidłową nazwę kanału: ${channelName} !`);
+                } else if(args[2]) channel.send(`Podano nieprawidłową nazwę kanału: ${channelName} !`);
             } else if(args[1]) channel.send(`Nieprawidłowy numer statystyki! Wpisz **!pomoc**, jeżeli potrzebujesz pomocy.`);
 
             break;
