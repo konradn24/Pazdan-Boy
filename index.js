@@ -118,7 +118,7 @@ bot.on('message', msg=>{
                     server.channels.find("name", `${channelName}`).setName(`Osoby w zarządzie: ${admins.size}`); administrationChannelName = `Osoby w zarządzie: ${admins.size}`;
                     administrationStatistic = true;
                 } else channel.send(`Podano nieprawidłową nazwę kanału: ${channelName} !`);
-            } else channel.send(`Nieprawidłowy numer statystyki! Wpisz **!pomoc**, jeżeli potrzebujesz pomocy.`);
+            } else if(args[1]) channel.send(`Nieprawidłowy numer statystyki! Wpisz **!pomoc**, jeżeli potrzebujesz pomocy.`);
 
             break;
         }
