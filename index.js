@@ -5,15 +5,17 @@ const jsonfile = require('jsonfile');
 
 const prefix = "!";
 
-var onlineMembersChannelID, onlineMembersChannelName;
-var membersChannelID, membersChannelName;
-var lastMemberChannelID, lastMemberChannelName, lastMember = "Pazdan-Boy";
-var dateChannelID, dateChannelName;
-var administrationChannelID, administrationChannelName;
+var onlineMembersChannelID, onlineMembersChannelName, onlineMembersStatistic = false;
+var membersChannelID, membersChannelName, membersStatistic = false;
+var lastMemberChannelID, lastMemberChannelName, lastMember = "Pazdan-Boy", lastMemberStatistic = false;
+var dateChannelID, dateChannelName, dateStatistic = false;
+var administrationChannelID, administrationChannelName, administrationStatistic = false;
 let admins, onlineUsers;
 
 bot.on('ready', () =>{
     console.log('Jestem aktywny!');
+
+    bot.user.setActivity('Pomoc: !pomoc', {type: 'CUSTOM_STATUS'});
 })
 
 bot.on('message', msg=>{
@@ -22,7 +24,7 @@ bot.on('message', msg=>{
     var content = msg.content;
     var channel = msg.channel;
 
-    if(dateChannelName != null) updateDate(server);
+    if(dateStatistic) updateDate(server);
 
     let args = content.substring(prefix.length).split(" ");
 
@@ -32,52 +34,96 @@ bot.on('message', msg=>{
             break;
         }
 
+        case "statystyki": {
+            channel.send(`> Statystyka nr. 1 (osoby online): ${onlineMembersStatistic}`);
+            channel.send(`> Statystyka nr. 2 (ilość członków serwera): ${membersStatistic}`);
+            channel.send(`> Statystyka nr. 3 (nowy użytkownik): ${lastMemberStatistic}`);
+            channel.send(`> Statystyka nr. 4 (data): ${dateStatistic}`);
+            channel.send(`> Statystyka nr. 5 (ilość osób w zarządzie): ${administrationStatistic}`);
+            break;
+        }
+
         case "pomoc": {
-            channel.send("> **czesc** - sprawdza czy bot działa poprawnie (jeżeli odpowie - wszystko jest w porządku)\n > **statystyki** - informuje ile kanałów statystyk jest aktywnych\n > **ustaw-kanal *<numer statystyki>* *<nazwa kanału>*** - przypisuje podany kanał do statystyki oznaczonej numerem (konieczne jest ID kanału!)");
+            channel.send("> **czesc** - sprawdza czy bot działa poprawnie (jeżeli odpowie - wszystko jest w porządku)\n > **statystyki** - informuje ile kanałów statystyk jest aktywnych\n > **ustaw-kanal *<numer statystyki>* *<nazwa kanału>*** - przypisuje podany kanał do statystyki oznaczonej numerem\n > **usun-kanal *<nazwa kanału>*** - przestaje wyświetlać statystyki na podanym kanale");
             channel.send("**** \n `NUMERY STATYSTYK` \n ****");
             channel.send("> **1** - ilość aktywnych członków serwera.");
+            channel.send("> **2** - sumaryczna ilość członków serwera.");
+            channel.send("> **3** - nowy użytkownik na serwerze.");
+            channel.send("> **4** - aktualna data.");
+            channel.send("> **5** - ilość osób w zarządzie.");
             break;
         }
 
         case "ustaw-kanal": {
-            if(args[1] == 1) {
-                onlineMembersChannelID = server.channels.find("name", `${args[2]}`).id;
+            if(!args[1]) channel.send("Podaj numer statystyki, a następnie nazwę kanału! Wpisz **!pomoc**, jeżeli jej potrzebujesz.");
+            else if(!args[2]) channel.send("Po numerze statystyki podaj nazwę kanału do którego chcesz ją przypisać! Wpisz **!pomoc**, jeżeli jej potrzebujesz.");
 
-                channel.send(`Ustawiono identyfikator kanału statystyki nr. 1 jako ${onlineMembersChannelID} (była nazwa: ${args[2]})`);
+            var channelName = "";
+            if(args[2]) {
+                for(var i = 2; i < args.length; i++) {
+                    channelName += args[i] + " ";
+                }
 
-                onlineUsers = server.members.filter(member => member.presence.status === "online");
-
-                server.channels.find("name", `${args[2]}`).setName(`Osoby online: ${onlineUsers.size}`); onlineMembersChannelName = `Osoby online: ${onlineUsers.size}`;
-            } else if(args[1] == 2) {
-                membersChannelID = server.channels.find("name", `${args[2]}`).id;
-
-                channel.send(`Ustawiono identyfikator kanału statystyki nr. 2 (ilość użytkowników) jako ${membersChannelID} (była nazwa: ${args[2]})`);
-
-                server.channels.find("name", `${args[2]}`).setName(`Osoby: ${server.memberCount}`); membersChannelName = `Osoby: ${server.memberCount}`;
-            } else if(args[1] == 3) {
-                lastMemberChannelID = server.channels.find("name", `${args[2]}`).id;
-
-                channel.send(`Ustawiono identyfikator kanału statystyki nr. 3 (nowy użytkownik) jako ${lastMemberChannelID} (była nazwa: ${args[2]})`);
-
-                server.channels.find("name", `${args[2]}`).setName(`Nowa osoba: ${lastMember}`); lastMemberChannelName = `Nowa osoba: ${lastMember}`;
-            } else if(args[1] == 4) {
-                dateChannelID = server.channels.find("name", `${args[2]}`).id;
-
-                channel.send(`Ustawiono identyfikator kanału statystyki nr. 4 (aktualna data) jako ${dateChannelID} (była nazwa: ${args[2]})`);
-
-                server.channels.find("name", `${args[2]}`).setName(`Data: 0`); dateChannelName = `Data: 0`;
-            } else if(args[1] == 5) {
-                administrationChannelID = server.channels.find("name", `${args[2]}`).id;
-
-                channel.send(`Ustawiono identyfikator kanału statystyki nr. 5 (ilość moderatorów) jako ${administrationChannelID} (była nazwa: ${args[2]})`);
-
-                // for(var i = 0; i < server.members.size; i++) if(server.members._array[i].roles.find("name", "I🛑 ZARZĄD") != null) admins++;
-                admins = server.members.filter(function(x) {
-                    return x.roles.find("name", "I🛑 ZARZĄD") != null;
-                });
-                server.channels.find("name", `${args[2]}`).setName(`Osoby w zarządzie: ${admins.size}`); administrationChannelName = `Osoby w zarządzie: ${admins.size}`;
+                channelName = channelName.substr(0, channelName.length - 2);
             }
 
+            if(args[1] == 1) {
+                if(server.channels.find("name", `${args[2]}`) != null) {
+                    onlineMembersChannelID = server.channels.find("name", `${channelName}`).id;
+
+                    channel.send(`Ustawiono identyfikator kanału statystyki nr. 1 jako ${onlineMembersChannelID} (była nazwa: ${channelName})`);
+
+                    onlineUsers = server.members.filter(member => member.presence.status === "online");
+
+                    server.channels.find("name", `${channelName}`).setName(`Osoby online: ${onlineUsers.size}`); onlineMembersChannelName = `Osoby online: ${onlineUsers.size}`;
+                    onlineMembersStatistic = true;
+                } else channel.send(`Podano nieprawidłową nazwę kanału: ${channelName} !`);
+            } else if(args[1] == 2) {
+                if(server.channels.find("name", `${channelName}`) != null) {
+                    membersChannelID = server.channels.find("name", `${channelName}`).id;
+
+                    channel.send(`Ustawiono identyfikator kanału statystyki nr. 2 (ilość użytkowników) jako ${membersChannelID} (była nazwa: ${channelName})`);
+
+                    server.channels.find("name", `${channelName}`).setName(`Osoby: ${server.memberCount}`); membersChannelName = `Osoby: ${server.memberCount}`;
+                    membersStatistic = true;
+                } else channel.send(`Podano nieprawidłową nazwę kanału: ${channelName} !`);
+            } else if(args[1] == 3) {
+                if(server.channels.find("name", `${channelName}`) != null) {
+                    lastMemberChannelID = server.channels.find("name", `${channelName}`).id;
+
+                    channel.send(`Ustawiono identyfikator kanału statystyki nr. 3 (nowy użytkownik) jako ${lastMemberChannelID} (była nazwa: ${channelName})`);
+
+                    server.channels.find("name", `${channelName}`).setName(`Nowa osoba: ${lastMember}`); lastMemberChannelName = `Nowa osoba: ${lastMember}`;
+                    lastMemberStatistic = true;
+                } else channel.send(`Podano nieprawidłową nazwę kanału: ${channelName} !`);
+            } else if(args[1] == 4) {
+                if(server.channels.find("name", `${channelName}`) != null) {
+                    dateChannelID = server.channels.find("name", `${channelName}`).id;
+
+                    channel.send(`Ustawiono identyfikator kanału statystyki nr. 4 (aktualna data) jako ${dateChannelID} (była nazwa: ${channelName})`);
+
+                    server.channels.find("name", `${channelName}`).setName(`Data: 0`); dateChannelName = `Data: 0`;
+                    dateStatistic = true;
+                } else channel.send(`Podano nieprawidłową nazwę kanału: ${channelName} !`);
+            } else if(args[1] == 5) {
+                if(server.channels.find("name", `${channelName}`) != null) {
+                    administrationChannelID = server.channels.find("name", `${channelName}`).id;
+
+                    channel.send(`Ustawiono identyfikator kanału statystyki nr. 5 (ilość moderatorów) jako ${administrationChannelID} (była nazwa: ${channelName})`);
+
+                    // for(var i = 0; i < server.members.size; i++) if(server.members._array[i].roles.find("name", "I🛑 ZARZĄD") != null) admins++;
+                    admins = server.members.filter(function(x) {
+                        return x.roles.find("name", "I🛑 ZARZĄD") != null;
+                    });
+                    server.channels.find("name", `${channelName}`).setName(`Osoby w zarządzie: ${admins.size}`); administrationChannelName = `Osoby w zarządzie: ${admins.size}`;
+                    administrationStatistic = true;
+                } else channel.send(`Podano nieprawidłową nazwę kanału: ${channelName} !`);
+            } else channel.send(`Nieprawidłowy numer statystyki! Wpisz **!pomoc**, jeżeli potrzebujesz pomocy.`);
+
+            break;
+        }
+
+        case "usun-kanal": {
             break;
         }
     }
@@ -95,23 +141,23 @@ bot.on("guildMemberUpdate", member => {
     admins = member.guild.members.filter(function(x) {
         return x.roles.find("name", "I🛑 ZARZĄD") != null;
     });
-    if(administrationChannelName != null) member.guild.channels.find("name", `${administrationChannelName}`).setName(`Osoby w zarządzie: ${admins.size}`); administrationChannelName = `Osoby w zarządzie: ${admins.size}`;
+    if(administrationStatistic) member.guild.channels.find("name", `${administrationChannelName}`).setName(`Osoby w zarządzie: ${admins.size}`); administrationChannelName = `Osoby w zarządzie: ${admins.size}`;
 });
 
 bot.on("guildMemberAdd", member => {
-    if(membersChannelName != null) {
+    if(membersStatistic) {
         member.guild.channels.find("name", `${membersChannelName}`).setName(`Osoby: ${member.guild.memberCount}`);
         membersChannelName = `Osoby: ${member.guild.memberCount}`;
     }
 
-    if(lastMemberChannelName != null) {
+    if(lastMemberStatistic) {
         lastMember = member.displayName;
         member.guild.channels.find("name", `${lastMemberChannelName}`).setName(`Nowa osoba: ${lastMember}`); lastMemberChannelName = `Nowa osoba: ${lastMember}`;
     }
 });
 
 bot.on("guildMemberRemove", member => {
-    if(membersChannelName != null) {
+    if(membersStatistic) {
         member.guild.channels.find("name", `${membersChannelName}`).setName(`Osoby: ${member.guild.memberCount}`); 
         membersChannelName = `Osoby: ${member.guild.memberCount}`;
     }
@@ -123,7 +169,6 @@ function updateDate(guild) {
     var month = today.getMonth();
     var year = today.getFullYear();
     if(guild.channels.find("name", dateChannelName) != null) { guild.channels.find("name", dateChannelName).setName(`Data: ${day}.${month+1}.${year}`); dateChannelName = `Data: ${day}.${month+1}.${year}`; }
-    if(guild.channels.find("name", dateChannelName) == null) console.log(dateChannelName);
 }
 
 bot.login(process.env.BOT_TOKEN);
