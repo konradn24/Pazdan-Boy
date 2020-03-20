@@ -118,6 +118,8 @@ bot.on('message', msg=>{
             } else channel.send("Nie znaleziono kanału o nazwie \"5\"");
 
             channel.send(`Automatyczna konfiguracja statystyk ukończona! Ustawiono ${maked} z 5 kanałów. Wprowadź **!statystyki**, aby zobaczyć aktywne statystyki.`);
+
+            break;
         }
 
         case "ustaw-kanal": {
