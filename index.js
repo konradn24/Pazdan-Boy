@@ -54,7 +54,78 @@ bot.on('message', msg=>{
             break;
         }
 
+        case "automatycznie-ustaw-kanaly": {
+            if(!msg.member.hasPermission(`MANAGE_GUILD`)) {
+                channel.send("Nie masz uprawnienia \"zarządzanie serwerem\", które jest potrzebne do używania tego polecenia!");
+                break;
+            }
+
+            var maked = 0;
+
+            if(server.channels.find("name", `1`) != null) {
+                onlineMembersChannelID = server.channels.find("name", `1`).id;
+
+                channel.send(`Automatycznie ustawiono identyfikator kanału statystyki nr. 1 (osoby online) jako ${onlineMembersChannelID}`);
+
+                onlineUsers = server.members.filter(member => member.presence.status === "online");
+
+                server.channels.find("name", `1`).setName(`Osoby online: ${onlineUsers.size}`); onlineMembersChannelName = `Osoby online: ${onlineUsers.size}`;
+                onlineMembersStatistic = true;
+                maked++;
+            } else channel.send("Nie znaleziono kanału o nazwie \"1\"");
+
+            if(server.channels.find("name", "2") != null) {
+                membersChannelID = server.channels.find("name", "2").id;
+
+                channel.send(`Automatycznie ustawiono identyfikator kanału statystyki nr. 2 (ilość użytkowników) jako ${membersChannelID}`);
+
+                server.channels.find("name", `2`).setName(`Czołgiści: ${server.memberCount}`); membersChannelName = `Czołgiści: ${server.memberCount}`;
+                membersStatistic = true;
+                maked++;
+            } else channel.send("Nie znaleziono kanału o nazwie \"2\"");
+
+            if(server.channels.find("name", "3") != null) {
+                lastMemberChannelID = server.channels.find("name", `3`).id;
+
+                channel.send(`Automatycznie ustawiono identyfikator kanału statystyki nr. 3 (nowy użytkownik) jako ${lastMemberChannelID}`);
+
+                server.channels.find("name", `3`).setName(`Nowy czołgista: ${lastMember}`); lastMemberChannelName = `Nowy czołgista: ${lastMember}`;
+                lastMemberStatistic = true;
+                maked++;
+            } else channel.send("Nie znaleziono kanału o nazwie \"3\"");
+
+            if(server.channels.find("name", "4") != null) {
+                dateChannelID = server.channels.find("name", `4`).id;
+
+                channel.send(`Automatycznie ustawiono identyfikator kanału statystyki nr. 4 (aktualna data) jako ${dateChannelID}`);
+
+                server.channels.find("name", `4`).setName(`Data: 0`); dateChannelName = `Data: 0`;
+                dateStatistic = true;
+                maked++;
+            } else channel.send("Nie znaleziono kanału o nazwie \"4\"");
+
+            if(server.channels.find("name", "5") != null) {
+                administrationChannelID = server.channels.find("name", `5`).id;
+
+                channel.send(`Automatycznie ustawiono identyfikator kanału statystyki nr. 5 (ilość moderatorów) jako ${administrationChannelID}`);
+
+                admins = server.members.filter(function(x) {
+                    return x.roles.find("name", "I🛑 ZARZĄD") != null;
+                });
+                server.channels.find("name", `5`).setName(`Osoby w zarządzie: ${admins.size}`); administrationChannelName = `Osoby w zarządzie: ${admins.size}`;
+                administrationStatistic = true;
+                maked++;
+            } else channel.send("Nie znaleziono kanału o nazwie \"5\"");
+
+            channel.send(`Automatyczna konfiguracja statystyk ukończona! Ustawiono ${maked} z 5 kanałów. Wprowadź **!statystyki**, aby zobaczyć aktywne statystyki.`);
+        }
+
         case "ustaw-kanal": {
+            if(!msg.member.hasPermission(`MANAGE_GUILD`)) {
+                channel.send("Nie masz uprawnienia \"zarządzanie serwerem\", które jest potrzebne do używania tego polecenia!");
+                break;
+            }
+
             if(!args[1]) channel.send("Podaj numer statystyki, a następnie nazwę kanału! Wpisz **!pomoc**, jeżeli jej potrzebujesz.");
             else if(!args[2]) channel.send("Po numerze statystyki podaj nazwę kanału do którego chcesz ją przypisać! Wpisz **!pomoc**, jeżeli jej potrzebujesz.");
 
@@ -71,7 +142,7 @@ bot.on('message', msg=>{
                 if(server.channels.find("name", `${channelName}`) != null) {
                     onlineMembersChannelID = server.channels.find("name", `${channelName}`).id;
 
-                    channel.send(`Ustawiono identyfikator kanału statystyki nr. 1 jako ${onlineMembersChannelID} (była nazwa: ${channelName})`);
+                    channel.send(`Ustawiono identyfikator kanału statystyki nr. 1 (osoby online) jako ${onlineMembersChannelID} (była nazwa: ${channelName})`);
 
                     onlineUsers = server.members.filter(member => member.presence.status === "online");
 
@@ -124,6 +195,11 @@ bot.on('message', msg=>{
         }
 
         case "usun-statystyke": {
+            if(!msg.member.hasPermission(`MANAGE_GUILD`)) {
+                channel.send("Nie masz uprawnienia \"zarządzanie serwerem\", które jest potrzebne do używania tego polecenia!");
+                break;
+            }
+
             if(!args[1]) channel.send("Podaj numer statystyki, którą chcesz usunąc! Wpisz **!pomoc**, aby ją uzyskać.");
 
             if(args[1] = 1) {
